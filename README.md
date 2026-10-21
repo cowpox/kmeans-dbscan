@@ -105,7 +105,10 @@ kmeans-dbscan/
 │   └── plot_results.py            # gera os gráficos finais
 ├── data/                          # datasets gerados (não versionados)
 ├── results/                       # CSV de tempos + gráficos (não versionados)
-└── docs/referencial_teorico.md    # fundamentação teórica (artigos originais e paralelos)
+├── artigos/referencial_teorico.md # fundamentação teórica (artigos originais e paralelos)
+└── relatorio/                     # relatório final (LaTeX), editado por todo o grupo
+    ├── template_trabalho_semestre.tex
+    └── logo_uel.png
 ```
 
 ## Declaração de uso de IA
@@ -116,5 +119,12 @@ kmeans-dbscan/
 
 ## Fundamentação teórica
 
-Ver `docs/referencial_teorico.md` para os artigos originais de k-means e DBSCAN
-e os principais trabalhos sobre suas versões paralelas/distribuídas.
+Ver `artigos/referencial_teorico.md` para os artigos originais de k-means e
+DBSCAN e os principais trabalhos sobre suas versões paralelas/distribuídas.
+
+## Relatório final
+
+O relatório é escrito em LaTeX em `relatorio/template_trabalho_semestre.tex`
+(template oficial da disciplina, com `logo_uel.png`). Todo o grupo edita
+esse arquivo diretamente no repositório — commitar incrementalmente ao
+longo do desenvolvimento, não tudo de uma vez perto do prazo (12/11).

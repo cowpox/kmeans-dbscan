@@ -1,0 +1,29 @@
+# Java / Maven
+target/
+*.class
+
+# IDEs
+.idea/
+*.iml
+.vscode/
+.classpath
+.project
+.settings/
+
+# Datasets gerados (grandes, reproduzíveis via script — ver data/README.md)
+data/*.csv
+!data/README.md
+
+# Resultados gerados (reproduzíveis via scripts/run_scalability_tests.sh)
+results/*.csv
+results/plots/*.png
+
+# Python (scripts/)
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# SO
+.DS_Store
+Thumbs.db

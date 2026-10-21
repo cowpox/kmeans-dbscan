@@ -31,6 +31,12 @@ Propõe o k-means‖ ("k-means parallel"), uma versão distribuída da inicializ
 **Meng, X. et al. (2016).** "MLlib: Machine Learning in Apache Spark." *Journal of Machine Learning Research*, 17(34), 1–7.
 Descreve a arquitetura da biblioteca de aprendizado de máquina do Spark, incluindo a implementação distribuída de k-means sobre RDDs (particionamento dos dados, broadcast dos centróides a cada iteração, agregação distribuída). Referência útil caso a implementação seja em Scala/Spark, mesmo implementando o algoritmo manualmente em vez de usar o `MLlib.KMeans` pronto.
 
+**Sculley, D. (2010).** "Web-Scale K-Means Clustering." *Proceedings of the 19th International Conference on World Wide Web (WWW '10)*, pp. 1177–1178.
+Propõe o mini-batch k-means: em vez de usar todos os pontos a cada iteração, usa amostras (mini-batches) para atualizar os centróides, reduzindo drasticamente o custo por iteração com perda de qualidade pequena. Referência direta para discutir trade-off entre tempo de execução e qualidade do cluster quando o dataset cresce — relevante para a seção de discussão da escalabilidade do k-means, mesmo que a implementação do grupo use o k-means "clássico" (lote completo) paralelizado por partições.
+
+**Ene, A., Im, S., & Moseley, B. (2011).** "Fast Clustering using MapReduce." *Proceedings of the 17th ACM SIGKDD International Conference on Knowledge Discovery and Data Mining (KDD '11)*, pp. 681–689.
+Propõe algoritmos de clustering (k-means/k-median/k-center) adaptados ao modelo MapReduce com garantias teóricas de aproximação e poucos passes sobre os dados (via *coresets* — resumos compactos do dataset que preservam a estrutura de clusterização). Útil para contextualizar, na discussão de trabalhos relacionados, estratégias de paralelização de k-means diferentes da simples divisão de partições com map-reduce local (Dhillon & Modha / Zhao et al.).
+
 ---
 
 ## 2. DBSCAN
@@ -39,6 +45,9 @@ Descreve a arquitetura da biblioteca de aprendizado de máquina do Spark, inclui
 
 **Ester, M., Kriegel, H.-P., Sander, J., & Xu, X. (1996).** "A Density-Based Algorithm for Discovering Clusters in Large Spatial Databases with Noise." *Proceedings of the 2nd International Conference on Knowledge Discovery and Data Mining (KDD-96)*, pp. 226–231.
 Artigo original do DBSCAN. Define os conceitos de ε-vizinhança, ponto núcleo (*core point*), ponto de borda e ruído, e o algoritmo sequencial baseado em expansão de clusters a partir de pontos núcleo usando *region queries*. Referência obrigatória para a fundamentação teórica do algoritmo.
+
+**Schubert, E., Sander, J., Ester, M., Kriegel, H.-P., & Xu, X. (2017).** "DBSCAN Revisited, Revisited: Why and How You Should (Still) Use DBSCAN." *ACM Transactions on Database Systems*, 42(3), article 19.
+Artigo dos próprios autores originais (e coautores) do DBSCAN que corrige afirmações equivocadas feitas em um trabalho anterior (SIGMOD 2015) sobre a complexidade/corretude do algoritmo, e esclarece a complexidade real do DBSCAN sequencial (O(n log n) com índice espacial, O(n²) sem). Referência importante para a fundamentação teórica — útil para justificar com precisão a complexidade do algoritmo sequencial antes de discutir o ganho esperado da paralelização.
 
 ### 2.2 Paralelização e distribuição
 
@@ -51,10 +60,13 @@ Usa uma estrutura de conjuntos disjuntos (*union-find*) para unificar com efici�
 **He, Y., Tan, H., Luo, W., Mao, H., Ma, D., Feng, S., & Fan, J. (2011).** "MR-DBSCAN: An Efficient Parallel Density-Based Clustering Algorithm Using MapReduce." *Proceedings of the 17th IEEE International Conference on Parallel and Distributed Systems (ICPADS)*, pp. 473–480.
 Implementação de DBSCAN sobre MapReduce com particionamento espacial balanceado dos dados (via amostragem e KD-tree) e uma segunda fase que funde clusters entre partições vizinhas — mesmo problema de "fronteira de partição" tratado de outra forma.
 
+**He, Y., Tan, H., Luo, W., Feng, S., & Fan, J. (2014).** "MR-DBSCAN: A Scalable MapReduce-Based DBSCAN Algorithm for Heavily Skewed Data." *Frontiers of Computer Science*, 8(1), 83–99.
+Versão de jornal, estendida, do MR-DBSCAN apresentado em He et al. (2011) acima — mesma ideia central (particionamento espacial balanceado + fusão de clusters entre partições), com análise mais detalhada do desbalanceamento de carga em dados muito distorcidos (*heavily skewed*) e experimentos adicionais. Preferir citar esta versão em vez da de 2011 quando for necessário aprofundar a discussão de balanceamento de partições.
+
 **Dai, B.-R., & Lin, I.-C. (2012).** "Efficient Map/Reduce-Based DBSCAN Algorithm with Optimized Data Partitioning." *Proceedings of the IEEE 5th International Conference on Cloud Computing (CLOUD)*, pp. 59–66.
 Foca especificamente em como particionar o espaço de dados para equilibrar carga entre os nós/reducers e reduzir a quantidade de pontos duplicados entre partições vizinhas — referência útil para justificar a escolha do esquema de particionamento (grade, k-d tree, etc.) no relatório.
 
-**Han, D., Agrawal, A., Liao, W.-K., & Choudhary, A. (2018).** "A Novel Scalable DBSCAN Algorithm with Spark." *Proceedings of the 2018 IEEE International Parallel and Distributed Processing Symposium Workshops (IPDPSW)*, pp. 271–280.
+**Han, D., Agrawal, A., Liao, W.-K., & Choudhary, A. (2016).** "A Novel Scalable DBSCAN Algorithm with Spark." *Proceedings of the 2016 IEEE International Parallel and Distributed Processing Symposium Workshops (IPDPSW)*, pp. 271–280.
 Implementação de DBSCAN em Spark (RDDs), com particionamento espacial e redistribuição de pontos de fronteira. Referência direta caso a implementação do grupo seja em Scala/Spark.
 
 **Cordova, I., & Moh, T.-S. (2015).** "DBSCAN on Resilient Distributed Datasets." *Proceedings of the 2015 International Conference on High Performance Computing & Simulation (HPCS)*, pp. 531–540. IEEE.

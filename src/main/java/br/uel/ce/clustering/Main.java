@@ -19,7 +19,7 @@ import java.util.concurrent.Executors;
  * "mesma interface de execução" exigida pela disciplina para os dois algoritmos.
  *
  * Uso:
- *   java -jar target/clustering-escalabilidade.jar \
+ *   java -jar target/kmeans-dbscan.jar \
  *        --algoritmo kmeans|dbscan \
  *        --entrada caminho/para/dataset.csv \
  *        [--saida caminho/para/resultado.csv] \

@@ -5,7 +5,7 @@
 # Script de automação de testes: uso de IA permitido pelas regras da disciplina.
 #
 # Pré-requisitos:
-#   mvn package                       (gera target/clustering-escalabilidade.jar)
+#   mvn package                       (gera target/kmeans-dbscan.jar)
 #   python scripts/generate_datasets.py  (gera data/dataset1_full.csv e dataset2_full.csv)
 #
 # Variáveis de ambiente opcionais:
@@ -15,7 +15,7 @@ set -euo pipefail
 
 cd "$(dirname "$0")/.."
 
-JAR="target/clustering-escalabilidade.jar"
+JAR="target/kmeans-dbscan.jar"
 THREADS="${THREADS:-4}"
 SIZES=(10000 30000 50000 70000 90000 110000 130000 150000)
 RESULTS_CSV="results/scalability_results.csv"

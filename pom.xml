@@ -4,11 +4,11 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>br.uel.ce</groupId>
-    <artifactId>clustering-escalabilidade</artifactId>
+    <artifactId>kmeans-dbscan</artifactId>
     <version>1.0.0</version>
     <packaging>jar</packaging>
 
-    <name>Clustering Escalável — k-means e DBSCAN</name>
+    <name>k-means e DBSCAN — Computação Escalável</name>
     <description>Trabalho do Semestre de Computação Escalável (UEL): k-means e DBSCAN paralelos em Java.</description>
 
     <properties>
@@ -18,7 +18,7 @@
     </properties>
 
     <build>
-        <finalName>clustering-escalabilidade</finalName>
+        <finalName>kmeans-dbscan</finalName>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>

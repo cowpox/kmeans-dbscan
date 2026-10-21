@@ -1,4 +1,4 @@
-# Clustering Escalável — k-means e DBSCAN
+# kmeans-dbscan
 
 Trabalho do Semestre da disciplina Computação Escalável (UEL, prof. Larissa C.
 Shimomura): implementação paralela de k-means e DBSCAN em Java, com análise
@@ -25,12 +25,12 @@ Tarefa: **Clustering**. Linguagem/tecnologia: **Java** (`ExecutorService`/`ForkJ
 mvn clean package
 ```
 
-Gera `target/clustering-escalabilidade.jar`, já executável (classe principal configurada no `pom.xml`).
+Gera `target/kmeans-dbscan.jar`, já executável (classe principal configurada no `pom.xml`).
 
 ## Interface de execução (comum aos dois algoritmos)
 
 ```bash
-java -jar target/clustering-escalabilidade.jar \
+java -jar target/kmeans-dbscan.jar \
      --algoritmo kmeans|dbscan \
      --entrada caminho/para/dataset.csv \
      [--saida caminho/para/resultado.csv] \
@@ -50,7 +50,7 @@ java -jar target/clustering-escalabilidade.jar \
 Exemplo de uma execução única:
 
 ```bash
-java -jar target/clustering-escalabilidade.jar \
+java -jar target/kmeans-dbscan.jar \
      --algoritmo kmeans --entrada data/dataset1_full.csv --tamanho 50000 \
      --threads 4 --params "k=8" --dataset-nome dataset1 \
      --resultados-csv results/scalability_results.csv
@@ -92,7 +92,7 @@ THREADS=8 ./scripts/run_scalability_tests.sh
 ## Estrutura do repositório
 
 ```
-clustering-escalabilidade/
+kmeans-dbscan/
 ├── pom.xml
 ├── src/main/java/br/uel/ce/clustering/
 │   ├── Main.java                  # interface de execução comum (CLI)

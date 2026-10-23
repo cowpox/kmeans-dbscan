@@ -37,7 +37,7 @@
 | **Fase** | Revisão de literatura concluída; implementação dos algoritmos ainda não iniciada |
 | **Frente ativa** | Fichamentos e revisão de literatura (finalizados hoje); próxima frente é a implementação de k-means e DBSCAN |
 | **Próximo marco** | Preencher o formulário inicial do Classroom (grupo, tarefa, algoritmos, duplas, link do repo) — prazo **25/10/2026** |
-| **Bloqueio principal** | Nenhum bloqueio técnico; falta decidir os 2 datasets e o formato de saída comum antes de começar a implementar |
+| **Bloqueio principal** | Nenhum bloqueio técnico; falta decidir os 2 datasets (candidatos levantados em 2026-10-23, ver A-003) e o formato de saída comum antes de começar a implementar |
 | **Divisão de responsabilidades** | Herik e Julia → k-means; Adriano e Sofia → DBSCAN |
 | **Revisão de literatura** | Concluída — 23 artigos fichados em 8 slots temáticos (KM1–KM4 para k-means, DB1–DB4 para DBSCAN), cada slot com revisão de consistência própria |
 | **Implementação (k-means)** | Não iniciada — stub vazio em `src/main/java/br/uel/ce/clustering/kmeans/KMeansClustering.java` |
@@ -58,6 +58,7 @@
 | D-003 | 2026-10-21 | Linguagem/tecnologia: Java (Threads/ExecutorService/ForkJoin), descartando Scala/Spark. Motivo: DBSCAN paralelo já é difícil em qualquer linguagem; Java evita overhead de setup de Spark/Docker e dá medição de tempo mais limpa; nenhum trabalho anterior do grupo usou Java/Scala. | Grupo todo | Confirmada |
 | D-004 | 2026-10-21 | Repositório renomeado de `clustering-escalabilidade` para `kmeans-dbscan` (artifactId, nome do jar e documentação). | Adriano | Confirmada |
 | D-005 | 2026-10-21 | `relatorio/` e `artigos/` (referencial teórico) movidos para dentro do repositório `kmeans-dbscan` (antes viviam soltos em `Trabalho_final/`), para que o grupo edite o relatório colaborativamente via git. | Adriano | Confirmada |
+| D-006 | 2026-10-22 | Nas inconsistências internas dos artigos (texto contra tabela ou figura), vale o dado observado, e a divergência fica registrada em `docs/revisao-literatura/revisao_literatura.md` §9. | Herik | Confirmada |
 
 ---
 
@@ -74,6 +75,7 @@
 | P-007 | 2026-10-21 | Rodar testes de escalabilidade e gerar os 2 gráficos finais | Grupo todo | Aberta |
 | P-008 | 2026-10-21 | Escrever relatório final (template em `relatorio/template_trabalho_semestre.tex`) — prazo 12/11/2026 (atraso: -10%/dia) | Grupo todo | Aberta |
 | P-009 | 2026-10-21 | Preparar apresentação final (~20 min, ~5 min por pessoa) — 13/11/2026 | Grupo todo | Aberta |
+| P-010 | 2026-10-23 | Decidir o par de datasets (candidatos em A-003) e confirmar com a professora se uma visualização didática do funcionamento paralelo é permitida | Grupo todo | Aberta |
 
 ---
 
@@ -84,6 +86,8 @@ Descobertas e observações que mudam ou informam o rumo do projeto.
 | ID | Data | Achado | Implicação |
 |---|---|---|---|
 | A-001 | 2026-10-23 | A revisão de literatura foi organizada em 8 slots temáticos (KM1–KM4 para k-means, DB1–DB4 para DBSCAN), cobrindo os 23 artigos do referencial teórico em `docs/revisao-literatura/artigos/`, cada slot com fichamento (`fichamentos.md`) e revisão de consistência própria em `revisao_literatura.md`. | Base teórica para o relatório final já está estruturada antes mesmo de a implementação começar — ao escrever o relatório, usar os slots como esqueleto das seções de trabalhos relacionados. |
+| A-002 | 2026-10-22 | Nenhum dos 22 artigos mede *threads* Java em uma só máquina com n ≤ 150 mil pontos. A evidência mais próxima é Patwary et al. (memória compartilhada) e Wang et al. (speedup contra a melhor serial). Vários artigos reportam só speedup self-relative, e os valores de artigos diferentes não são comparáveis. | O relatório deve declarar a base de cada speedup e discutir o custo da fusão e o desbalanceamento de carga. |
+| A-003 | 2026-10-23 | O 3D Road Network (UCI) em lat/lon é 2-D e permite uma demonstração visual: os clusters atravessam as partições, o que mostra a fusão do DBSCAN. Seu uso em k-means está na literatura, mas não encontrei uso em DBSCAN. Para o DBSCAN, a literatura lida usa Household, GeoLife e Cosmo50. | Serve para o gráfico e para a demonstração. Se o grupo quiser respaldo da literatura de DBSCAN, o Household é o candidato. |
 
 ---
 
@@ -110,6 +114,14 @@ Modelo de entrada (copiar, preencher e colocar abaixo, da mais antiga para a mai
 - **Decisões:** D-001, D-002, D-003, D-004, D-005
 - **Pendências geradas:** P-002, P-003, P-004, P-005, P-006, P-007, P-008, P-009
 
+### 2026-10-22 (qui) — Leitura e fichamento dos 22 artigos de k-means e DBSCAN
+
+- **Tipo:** estudo
+- **Participantes:** Herik
+- **O que aconteceu:** montei a estrutura da revisão de literatura (molde de fichamento, catálogo dos PDFs, `fichamentos.md`, `revisao_literatura.md`, `referencias.bib`). Conferi os 22 PDFs no cabeçalho e no Crossref, e todos são os artigos esperados. Han et al. é de 2016 (a lista inicial dizia 2018), e Sculley, Ene et al., Schubert et al. e He et al. 2014 ficaram no repositório mesmo fora da lista. Li todos por inteiro e fichei em 8 slots (KM1–KM4 e DB1–DB4), com 191 citações literais conferidas no texto dos PDFs. Onde o texto de um artigo diverge de uma tabela ou figura, adotei o dado observado e registrei as 39 divergências em `revisao_literatura.md` §9. As afirmações do referencial teórico original que os PDFs não sustentam foram corrigidas e ficaram no changelog da revisão.
+- **Decisões:** D-006
+- **Achados:** A-002
+
 ### 2026-10-22 (qui) — Catálogo e organização da revisão de literatura (DBSCAN)
 
 - **Tipo:** estudo
@@ -123,6 +135,14 @@ Modelo de entrada (copiar, preencher e colocar abaixo, da mais antiga para a mai
 - **O que aconteceu:** `fichamentos.md` e `revisao_literatura.md` atualizados com os artigos de DBSCAN, completando os 8 slots temáticos (KM1–KM4, DB1–DB4), cada um com revisão de consistência; confirmado que o repositório já tem remoto configurado no GitHub (`origin/master` sincronizado, sem pendência de push); este documento (`logs.md`) preenchido pela primeira vez a partir do histórico de commits e do contexto já levantado com o grupo.
 - **Achados:** A-001
 - **Pendências geradas:** P-001 marcada como concluída (push ao GitHub já tinha sido feito antes desta sessão, mas não estava registrado)
+
+### 2026-10-23 (sex) — Pesquisa de datasets para os dois algoritmos
+
+- **Tipo:** estudo
+- **Participantes:** Herik
+- **O que aconteceu:** pesquisei datasets que atendem ao enunciado (10k a 150k pontos; cada dataset roda nos dois algoritmos, com um gráfico por dataset e duas linhas). Os candidatos reais são 3D Road Network e Household (UCI), Skin Segmentation (UCI), Birch2, Worms e Europe (Fränti), além dos sintéticos do scikit-learn (blobs e moons). Os pares mais promissores são blobs (já gerado pelo repositório) com 3D Road Network em lat/lon, e blobs com moons como opção sem downloads.
+- **Achados:** A-003
+- **Pendências geradas:** P-010
 
 ---
 

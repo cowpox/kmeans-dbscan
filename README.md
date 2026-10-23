@@ -8,7 +8,7 @@ de escalabilidade (tempo de execução vs. tamanho do dataset).
 
 | Dupla | Algoritmo |
 |---|---|
-| Herik Daurízio Ricardo, Julia Yokoyama Massaki | k-means |
+| Herik Daurizio Ricardo, Julia Yokoyama Massaki | k-means |
 | Adriano Lúcio Uchôa Brandão, Sofia Gutschow Casal | DBSCAN |
 
 Tarefa: **Clustering**. Linguagem/tecnologia: **Java** (`ExecutorService`/`ForkJoin`, sem frameworks externos de distribuição).
@@ -105,7 +105,14 @@ kmeans-dbscan/
 │   └── plot_results.py            # gera os gráficos finais
 ├── data/                          # datasets gerados (não versionados)
 ├── results/                       # CSV de tempos + gráficos (não versionados)
-├── artigos/referencial_teorico.md # fundamentação teórica (artigos originais e paralelos)
+├── docs/
+│   ├── logs.md                    # log do projeto: estado, decisões, pendências, achados, linha do tempo
+│   └── revisao-literatura/        # revisão de literatura: template, slots, fichas, .bib
+│       ├── artigos/               # 22 PDFs + catálogo (README.md)
+│       ├── fichamento_literatura_template.md
+│       ├── fichamentos.md
+│       ├── revisao_literatura.md
+│       └── referencias.bib
 └── relatorio/                     # relatório final (LaTeX), editado por todo o grupo
     ├── template_trabalho_semestre.tex
     └── logo_uel.png
@@ -119,8 +126,12 @@ kmeans-dbscan/
 
 ## Fundamentação teórica
 
-Ver `artigos/referencial_teorico.md` para os artigos originais de k-means e
-DBSCAN e os principais trabalhos sobre suas versões paralelas/distribuídas.
+Ver `docs/revisao-literatura/` (síntese em `revisao_literatura.md`, fichas em
+`fichamentos.md`, bibliografia em `referencias.bib`) para a
+leitura integral dos 22 artigos originais de k-means e DBSCAN e dos principais trabalhos sobre suas
+versões paralelas/distribuídas. O catálogo dos PDFs está em `docs/revisao-literatura/artigos/README.md`.
+O panorama inicial do grupo (`referencial_teorico.md`), escrito sem leitura integral, foi absorvido por essa
+síntese e removido; as correções que a leitura trouxe a ele estão em `revisao_literatura.md` §8.
 
 ## Relatório final
 

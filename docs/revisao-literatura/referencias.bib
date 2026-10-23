@@ -1,0 +1,275 @@
+% Referências da revisão de literatura do trabalho de k-means e DBSCAN paralelos.
+% Só entram aqui artigos LIDOS na íntegra e FICHADOS, com dados bibliográficos conferidos
+% (cabeçalho do PDF e/ou Crossref). O que não foi conferido fica em `note = {a conferir: ...}`.
+% Chave: sobrenome do 1º autor + ano + uma palavra do título, em minúsculas.
+% keywords: fichado = lido e fichado; slot = KM1..KM4 (k-means) ou DB1..DB4 (DBSCAN).
+% Ver docs/revisao-literatura/fichamento_literatura_template.md §6.
+
+@inproceedings{macqueen1967some,
+  keywords  = {fichado, KM1},
+  author    = {MacQueen, J.},
+  title     = {Some Methods for Classification and Analysis of Multivariate Observations},
+  booktitle = {Proceedings of the Fifth Berkeley Symposium on Mathematical Statistics and Probability},
+  volume    = {1},
+  pages     = {281--297},
+  year      = {1967},
+  publisher = {University of California Press},
+  address   = {Berkeley, CA},
+  note      = {Sem DOI. Paginacao impressa conferida no cabecalho do PDF.}
+}
+
+@article{lloyd1982least,
+  keywords = {fichado, KM1},
+  author   = {Lloyd, Stuart P.},
+  title    = {Least Squares Quantization in {PCM}},
+  journal  = {IEEE Transactions on Information Theory},
+  volume   = {28},
+  number   = {2},
+  pages    = {129--137},
+  year     = {1982},
+  month    = mar,
+  doi      = {10.1109/TIT.1982.1056489},
+  note     = {Rascunho de 1957 (Bell Laboratories) publicado em 1982. Quantizacao escalar; a ultima pagina do PDF traz o inicio de outro artigo (Newman, The Hexagon Theorem).}
+}
+
+@inproceedings{arthur2007kmeanspp,
+  keywords  = {fichado, KM2},
+  author    = {Arthur, David and Vassilvitskii, Sergei},
+  title     = {k-means++: The Advantages of Careful Seeding},
+  booktitle = {Proceedings of the Eighteenth Annual ACM-SIAM Symposium on Discrete Algorithms (SODA '07)},
+  pages     = {1027--1035},
+  year      = {2007},
+  publisher = {SIAM},
+  address   = {Philadelphia, PA},
+  note      = {a conferir: DOI 10.5555/1283383.1283494 (fonte secundaria). PDF lido e o manuscrito do autor (2006), sem paginacao do SODA; citacoes por pagina do PDF.}
+}
+
+@article{bahmani2012scalable,
+  keywords = {fichado, KM2},
+  author   = {Bahmani, Bahman and Moseley, Benjamin and Vattani, Andrea and Kumar, Ravi and Vassilvitskii, Sergei},
+  title    = {Scalable k-means++},
+  journal  = {Proceedings of the VLDB Endowment},
+  volume   = {5},
+  number   = {7},
+  pages    = {622--633},
+  year     = {2012},
+  doi      = {10.14778/2180912.2180915},
+  note     = {PDF lido: arXiv:1203.6402v1 com aviso de copyright da VLDB Endowment; paginacao impressa conferida no texto.}
+}
+
+@incollection{dhillon2000data,
+  keywords  = {fichado, KM3},
+  author    = {Dhillon, Inderjit S. and Modha, Dharmendra S.},
+  title     = {A Data-Clustering Algorithm on Distributed Memory Multiprocessors},
+  booktitle = {Large-Scale Parallel Data Mining},
+  series    = {Lecture Notes in Computer Science},
+  pages     = {245--260},
+  year      = {2000},
+  publisher = {Springer},
+  address   = {Berlin, Heidelberg},
+  doi       = {10.1007/3-540-46502-2_13},
+  note      = {a conferir: volume LNCS (1759) e editores. Origem: workshop do KDD'99; o Crossref data de 2002 (publicacao online). PDF lido e o manuscrito em formato LNCS, com numeracao propria 1--15.}
+}
+
+@inproceedings{zhao2009parallel,
+  keywords  = {fichado, KM3},
+  author    = {Zhao, Weizhong and Ma, Huifang and He, Qing},
+  title     = {Parallel K-Means Clustering Based on {MapReduce}},
+  booktitle = {Cloud Computing (CloudCom 2009)},
+  editor    = {Jaatun, Martin Gilje and Zhao, Gansen and Rong, Chunming},
+  series    = {Lecture Notes in Computer Science},
+  volume    = {5931},
+  pages     = {674--679},
+  year      = {2009},
+  publisher = {Springer},
+  doi       = {10.1007/978-3-642-10665-1_71}
+}
+
+@inproceedings{ene2011fast,
+  keywords  = {fichado, KM3},
+  author    = {Ene, Alina and Im, Sungjin and Moseley, Benjamin},
+  title     = {Fast Clustering Using {MapReduce}},
+  booktitle = {Proceedings of the 17th ACM SIGKDD International Conference on Knowledge Discovery and Data Mining (KDD '11)},
+  pages     = {681--689},
+  year      = {2011},
+  publisher = {ACM},
+  doi       = {10.1145/2020408.2020515},
+  note      = {PDF lido: arXiv:1109.1579v1 (20 p., versao estendida; a do KDD tem 9 p.). Trata k-center e k-median, nao k-means.}
+}
+
+@article{meng2016mllib,
+  keywords = {fichado, KM4},
+  author   = {Meng, Xiangrui and Bradley, Joseph and Yavuz, Burak and Sparks, Evan and Venkataraman, Shivaram and Liu, Davies and Freeman, Jeremy and Tsai, DB and Amde, Manish and Owen, Sean and Xin, Doris and Xin, Reynold and Franklin, Michael J. and Zadeh, Reza and Zaharia, Matei and Talwalkar, Ameet},
+  title    = {{MLlib}: Machine Learning in {Apache Spark}},
+  journal  = {Journal of Machine Learning Research},
+  volume   = {17},
+  number   = {34},
+  pages    = {1--7},
+  year     = {2016},
+  note     = {a conferir: numero (34); sem DOI. Cabecalho do PDF: 17 (2016) 1-7, Submitted 5/15, Published 4/16.}
+}
+
+@inproceedings{sculley2010webscale,
+  keywords  = {fichado, KM4},
+  author    = {Sculley, D.},
+  title     = {Web-Scale k-Means Clustering},
+  booktitle = {Proceedings of the 19th International Conference on World Wide Web (WWW '10)},
+  pages     = {1177--1178},
+  year      = {2010},
+  address   = {Raleigh, NC},
+  doi       = {10.1145/1772690.1772862},
+  note      = {Poster de 2 paginas.}
+}
+
+@inproceedings{ester1996density,
+  keywords  = {fichado, DB1},
+  author    = {Ester, Martin and Kriegel, Hans-Peter and Sander, J{\"o}rg and Xu, Xiaowei},
+  title     = {A Density-Based Algorithm for Discovering Clusters in Large Spatial Databases with Noise},
+  booktitle = {Proceedings of the Second International Conference on Knowledge Discovery and Data Mining (KDD-96)},
+  pages     = {226--231},
+  year      = {1996},
+  publisher = {AAAI Press},
+  note      = {Sem DOI. Paginacao impressa 226--231 conferida no PDF (rodape: KDD-96 Proceedings, AAAI).}
+}
+
+@article{schubert2017dbscan,
+  keywords = {fichado, DB1},
+  author   = {Schubert, Erich and Sander, J{\"o}rg and Ester, Martin and Kriegel, Hans-Peter and Xu, Xiaowei},
+  title    = {{DBSCAN} Revisited, Revisited: Why and How You Should (Still) Use {DBSCAN}},
+  journal  = {ACM Transactions on Database Systems},
+  volume   = {42},
+  number   = {3},
+  articleno = {19},
+  pages    = {19:1--19:21},
+  year     = {2017},
+  month    = jul,
+  doi      = {10.1145/3068335},
+  note     = {Correspondencia tecnica. Paginacao impressa 19:N conferida no PDF.}
+}
+
+@inproceedings{patwary2012new,
+  keywords  = {fichado, DB2},
+  author    = {Patwary, Md. Mostofa Ali and Palsetia, Diana and Agrawal, Ankit and Liao, Wei-keng and Manne, Fredrik and Choudhary, Alok},
+  title     = {A New Scalable Parallel {DBSCAN} Algorithm Using the Disjoint-Set Data Structure},
+  booktitle = {Proceedings of the International Conference on High Performance Computing, Networking, Storage and Analysis (SC '12)},
+  pages     = {1--11},
+  year      = {2012},
+  doi       = {10.1109/SC.2012.9},
+  note      = {O PDF nao traz paginacao impressa por pagina; as paginas citadas nas fichas sao as do PDF.}
+}
+
+@inproceedings{wang2020theoretically,
+  keywords  = {fichado, DB2},
+  author    = {Wang, Yiqiu and Gu, Yan and Shun, Julian},
+  title     = {Theoretically-Efficient and Practical Parallel {DBSCAN}},
+  booktitle = {Proceedings of the 2020 ACM SIGMOD International Conference on Management of Data (SIGMOD '20)},
+  pages     = {2555--2571},
+  year      = {2020},
+  doi       = {10.1145/3318464.3380582},
+  note      = {Paginacao impressa 2555--2571 conferida no PDF. Provas completas na versao estendida citada como [83].}
+}
+
+@article{xu1999fast,
+  keywords = {fichado, DB3},
+  author   = {Xu, Xiaowei and J{\"a}ger, Jochen and Kriegel, Hans-Peter},
+  title    = {A Fast Parallel Clustering Algorithm for Large Spatial Databases},
+  journal  = {Data Mining and Knowledge Discovery},
+  volume   = {3},
+  number   = {3},
+  pages    = {263--290},
+  year     = {1999},
+  doi      = {10.1023/A:1009884809343},
+  note     = {Volume, numero e DOI conferidos no Crossref. Paginacao impressa 263--290 conferida no PDF.}
+}
+
+@inproceedings{gotz2015hpdbscan,
+  keywords  = {fichado, DB3},
+  author    = {G{\"o}tz, Markus and Bodenstein, Christian and Riedel, Morris},
+  title     = {{HPDBSCAN}: Highly Parallel {DBSCAN}},
+  booktitle = {Proceedings of the Workshop on Machine Learning in High-Performance Computing Environments (MLHPC '15)},
+  articleno = {2},
+  pages     = {1--10},
+  year      = {2015},
+  doi       = {10.1145/2834892.2834894},
+  note      = {O PDF nao traz paginacao impressa por pagina; as paginas citadas nas fichas sao as do PDF.}
+}
+
+@inproceedings{he2011mrdbscan,
+  keywords  = {fichado, DB3},
+  author    = {He, Yaobin and Tan, Haoyu and Luo, Wuman and Mao, Huajian and Ma, Di and Feng, Shengzhong and Fan, Jianping},
+  title     = {{MR-DBSCAN}: An Efficient Parallel Density-Based Clustering Algorithm Using {MapReduce}},
+  booktitle = {2011 IEEE 17th International Conference on Parallel and Distributed Systems (ICPADS)},
+  pages     = {473--480},
+  year      = {2011},
+  doi       = {10.1109/ICPADS.2011.83},
+  note      = {As paginas citadas nas fichas sao as do PDF (8 paginas).}
+}
+
+@article{he2014mrdbscan,
+  keywords = {fichado, DB3},
+  author   = {He, Yaobin and Tan, Haoyu and Luo, Wuman and Feng, Shengzhong and Fan, Jianping},
+  title    = {{MR-DBSCAN}: A Scalable {MapReduce}-Based {DBSCAN} Algorithm for Heavily Skewed Data},
+  journal  = {Frontiers of Computer Science},
+  volume   = {8},
+  number   = {1},
+  pages    = {83--99},
+  year     = {2014},
+  doi      = {10.1007/s11704-013-3158-3},
+  note     = {Versao estendida de He et al. (2011). Paginacao impressa 83--99 conferida no PDF.}
+}
+
+@inproceedings{dai2012efficient,
+  keywords  = {fichado, DB3},
+  author    = {Dai, Bi-Ru and Lin, I-Chang},
+  title     = {Efficient {Map/Reduce}-Based {DBSCAN} Algorithm with Optimized Data Partition},
+  booktitle = {2012 IEEE Fifth International Conference on Cloud Computing (CLOUD)},
+  pages     = {59--66},
+  year      = {2012},
+  doi       = {10.1109/CLOUD.2012.42},
+  note      = {Paginacao impressa 59--66 conferida no PDF.}
+}
+
+@inproceedings{han2016novel,
+  keywords  = {fichado, DB3},
+  author    = {Han, Dianwei and Agrawal, Ankit and Liao, Wei-keng and Choudhary, Alok},
+  title     = {A Novel Scalable {DBSCAN} Algorithm with {Spark}},
+  booktitle = {2016 IEEE International Parallel and Distributed Processing Symposium Workshops (IPDPSW)},
+  pages     = {1393--1402},
+  year      = {2016},
+  doi       = {10.1109/IPDPSW.2016.57},
+  note      = {A lista inicial do grupo trazia o ano 2018; o PDF e o Crossref dizem 2016.}
+}
+
+@inproceedings{cordova2015dbscan,
+  keywords  = {fichado, DB3},
+  author    = {Cordova, Irving and Moh, Teng-Sheng},
+  title     = {{DBSCAN} on Resilient Distributed Datasets},
+  booktitle = {2015 International Conference on High Performance Computing \& Simulation (HPCS)},
+  pages     = {531--540},
+  year      = {2015},
+  doi       = {10.1109/HPCSim.2015.7237086},
+  note      = {Paginacao impressa 531--540 conferida no PDF.}
+}
+
+@inproceedings{bohm2009density,
+  keywords  = {fichado, DB4},
+  author    = {B{\"o}hm, Christian and Noll, Robert and Plant, Claudia and Wackersreuther, Bianca},
+  title     = {Density-Based Clustering Using Graphics Processors},
+  booktitle = {Proceedings of the 18th ACM Conference on Information and Knowledge Management (CIKM '09)},
+  pages     = {661--670},
+  year      = {2009},
+  doi       = {10.1145/1645953.1646038},
+  note      = {Paginacao impressa 661--670 conferida no PDF.}
+}
+
+@article{andrade2013gdbscan,
+  keywords = {fichado, DB4},
+  author   = {Andrade, Guilherme and Ramos, Gabriel and Madeira, Daniel and Sachetto, Rafael and Ferreira, Renato and Rocha, Leonardo},
+  title    = {{G-DBSCAN}: A {GPU} Accelerated Algorithm for Density-Based Clustering},
+  journal  = {Procedia Computer Science},
+  volume   = {18},
+  pages    = {369--378},
+  year     = {2013},
+  doi      = {10.1016/j.procs.2013.05.200},
+  note     = {Anais do ICCS 2013. Paginacao impressa 369--378 conferida no PDF.}
+}

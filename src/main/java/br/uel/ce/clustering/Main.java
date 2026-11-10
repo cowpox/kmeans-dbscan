@@ -6,6 +6,7 @@ import br.uel.ce.clustering.common.ClusteringResult;
 import br.uel.ce.clustering.common.DataPoint;
 import br.uel.ce.clustering.common.DatasetReader;
 import br.uel.ce.clustering.common.ResultWriter;
+import br.uel.ce.clustering.dbscan.DBSCANClassico;
 import br.uel.ce.clustering.dbscan.DBSCANClustering;
 import br.uel.ce.clustering.kmeans.KMeansClustering;
 
@@ -45,6 +46,7 @@ public final class Main {
         ClusteringAlgorithm algorithm = switch (cli.algoritmo) {
             case "kmeans" -> new KMeansClustering();
             case "dbscan" -> new DBSCANClustering();
+            case "dbscan-classico" -> new DBSCANClassico();
             default -> throw new IllegalArgumentException("Algoritmo desconhecido: " + cli.algoritmo);
         };
 

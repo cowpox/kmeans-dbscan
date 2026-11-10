@@ -42,7 +42,9 @@ public final class DBSCANClustering implements ClusteringAlgorithm {
         //  - Cada partição identifica pontos núcleo e expande clusters localmente.
         //  - Tratar os pontos na fronteira entre partições: mesclar clusters que
         //    se espalham por mais de uma partição (ex.: estrutura union-find).
-        //  - Rotular pontos de ruído com -1.
+        //  - Convenção de rótulos (mesma do DBSCANClassico): -1 = marcação interna
+        //    de "não visitado" (estado inicial, não deve sobrar no resultado final);
+        //    -2 = rótulo final de ruído; 0, 1, 2, ... = clusters.
         throw new UnsupportedOperationException("DBSCAN ainda não implementado");
     }
 

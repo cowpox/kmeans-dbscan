@@ -7,7 +7,7 @@ public final class ClusteringResult {
 
     private final int[] labels;       // rótulo de cluster por ponto (mesmo índice do dataset de entrada)
     private final int numClusters;    // número de clusters encontrados (excluindo ruído)
-    private final int numNoisePoints; // pontos de ruído (0 para k-means; rótulo -1 para DBSCAN)
+    private final int numNoisePoints; // pontos de ruído (0 para k-means; rótulo -2 para DBSCAN — ver DBSCANClustering/DBSCANClassico)
 
     public ClusteringResult(int[] labels, int numClusters, int numNoisePoints) {
         this.labels = labels;

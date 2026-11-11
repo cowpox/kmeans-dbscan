@@ -70,17 +70,140 @@ public final class KMeansClustering implements ClusteringAlgorithm {
         // pode haver menos faixas que threads; dado n pequeno
         int numChunks = (n + chunkSize - 1) / chunkSize;
 
+        for (int iteration = 0; iteration < maxIter; iteration++){
+            // cada faixa tem seus próprios acumuladores (soma e contagem por cluster), sem lock
+            double[][] currentCentroids = centroids;
+            double[][][] partialSums = new double[numChunks][k][dimensions];
+            int[][] partialCounts = new int[numChunks][k];
+
+            List<Future<?>> tasks = new ArrayList<>();
+            for (int chunk = 0; chunk < numChunks; chunk++){
+                // submete uma task por faixa ao executor
+                int from = chunk * chunkSize;
+                int to = Math.min(n, from + chunkSize);
+                double[][] sums = partialSums[chunk];
+                int[] counts = partialCounts[chunk];
+                // cada task atribui os pontos ao centróide mais próximo
+                tasks.add(executor.submit(
+                        () -> assignRange(dataset, currentCentroids, labels, from, to, sums, counts)));
+            }
+            // espera todas as faixas terminarem antes de recalcular os centróides
+            for (Future<?> task : tasks){
+                task.get();
+            }
+
+            // Junta as somas das faixas na ordem
+            double[][] sums = partialSums[0];
+            int[] counts = partialCounts[0];
+            for (int chunk = 1; chunk < numChunks; chunk++){
+                for (int c = 0; c < k; c++){
+                    counts[c] += partialCounts[chunk][c];
+                    // soma por dimensão
+                    for (int j = 0; j < dimensions; j++){
+                        sums[c][j] += partialSums[chunk][c][j];
+                    }
+                }
+            }
+
+            // atualização: o novo centróide é a média dos pontos do cluster
+            // cluster vazio mantém o centróide anterior
+            double[][] newCentroids = new double[k][];
+            double maxShift = 0;
+                for (int c = 0; c < k; c++){
+                    if (counts[c] == 0){
+                        newCentroids[c] = centroids[c];
+                    } else{
+                        newCentroids[c] = new double[dimensions];
+                        for (int j = 0; j < dimensions; j++){
+                            newCentroids[c][j] = sums[c][j] / counts[c];
+                        }
+                    }
+                    maxShift = Math.max(maxShift, squaredDistance(centroids[c], newCentroids[c]));        
+                }
+                centroids = newCentroids;
+
+                // Convergiu
+                if (tolerance > 0 && maxShift <= tolerance * tolerance){
+                    break;
+                }
+            }
+            return new ClusteringResult(labels, k, 0); // sem ruído
 
         }
-    
-
-
-
-
-
-
-
+        /**
+        * Inicialização k-means++:
+        * O primeiro centróide é um ponto escolhido ao acaso. Os demais também são
+        * escolhidos ao acaso, mas quanto mais longe um ponto está dos centróides
+        * já escolhidos, maior a chance de ele ser o próximo.
+        */
         
+        private static double[][] initCentroids(List<DataPoint> dataset, int k, Random random){
+            int n = dataset.size();
+            double[][] centroids = new double[k][];
+            centroids[0] = dataset.get(random.nextInt(n)).getFeatures().clone();
+            
+            double[] minDistance = new double[n];
+            Arrays.fill(minDistance, Double.MAX_VALUE);
+
+            for (int c = 1; c < k; c++){
+                // apenas o último centróide pode diminuir alguma distância
+                double total = 0;
+                for (int i = 0; i < n; i++){
+                    double distance = squaredDistance(dataset.get(i).getFeatures(), centroids[c - 1]);
+                    minDistance[i] = Math.min(minDistance[i], distance);
+                    total += minDistance[i];
+                }
+
+                // sorteia um valor entre 0 e a soma total das distâncias
+                double target = random.nextDouble() * total;
+                int chosen = 0;
+                // percorre os pontos descontando suas distâncias até o valor zerar;
+                // pontos com distância maior ocupam uma fatia maior e são mais prováveis
+                while (chosen < n - 1){
+                    target -= minDistance[chosen];
+                    if (target < 0){
+                        break;
+                    }
+                    chosen++;
+                }
+                // copia as coordenadas do ponto escolhido como novo centróide
+                centroids[c] = dataset.get(chosen).getFeatures().clone();
+            }
+            return centroids;
+        }
+
+        // Atribui cada ponto de [from, to) ao centróide mais próximo e acumula soma e contagem
+        private static void assignRange(List<DataPoint> dataset, double[][] centroids, int[] labels,
+                                        int from, int to, double[][] sums, int[] counts){
+            for (int i = from; i < to; i++){
+                double[] x = dataset.get(i).getFeatures();
+                int best = 0;
+                double bestDistance = Double.MAX_VALUE;
+                for (int c = 0; c < centroids.length; c++){
+                    double distance = squaredDistance(x, centroids[c]);
+                    if (distance < bestDistance){
+                        bestDistance = distance;
+                        best = c;
+                    }
+                }
+                labels[i] = best;
+                counts[best]++;
+                for (int j = 0; j < x.length; j++){
+                    sums[best][j] += x[j];
+                }
+            }
+        }
+
+        // Calcula a distância euclidiana ao quadrado
+        private static double squaredDistance(double[] a, double[] b){
+            double sum = 0.0;
+            for (int j = 0; j < a.length; j++){
+                double diff = a[j] - b[j];
+                sum += diff * diff;
+            }
+            return sum;
+        }
+
     @Override
     public String getName(){
         return "kmeans";

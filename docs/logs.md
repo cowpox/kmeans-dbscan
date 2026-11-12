@@ -6,7 +6,7 @@
 **Projeto:** implementação paralela de k-means e DBSCAN em Java, com análise de escalabilidade
 **Instituição:** Departamento de Computação, UEL · **Disciplina:** Computação Escalável (prof.ª Larissa C. Shimomura)
 **Mantido por:** Herik Daurizio Ricardo, Julia Yokoyama Massaki, Adriano Lúcio Uchôa Brandão, Sofia Gutschow Casal
-**Última atualização:** 2026-11-10
+**Última atualização:** 2026-11-12
 
 ---
 
@@ -40,7 +40,7 @@
 | **Bloqueio principal** | Nenhum bloqueio técnico; falta decidir os 2 datasets (candidatos levantados em 2026-10-23, ver A-003) e o formato de saída comum antes de começar a implementar |
 | **Divisão de responsabilidades** | Herik e Julia → k-means; Adriano e Sofia → DBSCAN |
 | **Revisão de literatura** | Concluída — 23 artigos fichados em 8 slots temáticos (KM1–KM4 para k-means, DB1–DB4 para DBSCAN), cada slot com revisão de consistência própria |
-| **Implementação (k-means)** | Não iniciada — stub vazio em `src/main/java/br/uel/ce/clustering/kmeans/KMeansClustering.java` |
+| **Implementação (k-means)** | Em andamento — `KMeansClustering.java` (paralelo) escrito e compilando, ainda não executado/validado; `KMeansClassico.java` (baseline sequencial) só esqueleto (ver P-013) |
 | **Implementação (DBSCAN)** | Em andamento — `DBSCANClassico.java` (baseline sequencial) sendo ajustado por Adriano; `DBSCANClustering.java` (versão paralela) ainda stub vazio, só começa depois da clássica fechada |
 | **Experimentos de escalabilidade** | Não iniciados — scripts prontos (`generate_datasets.py`, `run_scalability_tests.sh`, `plot_results.py`), datasets ainda não gerados |
 | **Relatório** | Template LaTeX pronto (`relatorio/template_trabalho_semestre.tex`), conteúdo ainda não escrito |
@@ -74,7 +74,8 @@
 | P-002 | 2026-10-21 | Preencher formulário inicial do Classroom (grupo, tarefa, algoritmos, duplas, link do repositório) — prazo 25/10/2026 | Grupo todo | Aberta |
 | P-003 | 2026-10-21 | Escolher/gerar os 2 datasets (10.000–150.000 pontos; se sintéticos, com distribuições diferentes) | Grupo todo | Aberta |
 | P-004 | 2026-10-21 | Definir formato de saída comum entre os dois algoritmos (além da interface já criada em `common/`) | Grupo todo | Aberta |
-| P-005 | 2026-10-21 | Implementar k-means paralelo | Herik e Julia | Aberta (stub vazio) |
+| P-005 | 2026-10-21 | Implementar k-means paralelo | Herik e Julia | Aberta (primeira versão escrita e compilando em 2026-11-11; falta executar e validar) |
+| P-013 | 2026-11-11 | Implementar `KMeansClassico.java` (baseline sequencial, hoje só esqueleto) e usá-lo para validar a corretude e o speedup do k-means paralelo | Herik e Julia | Aberta |
 | P-006 | 2026-10-21 | Implementar DBSCAN paralelo | Adriano e Sofia | Aberta (depende da clássica — ver P-011) |
 | P-011 | 2026-11-10 | Implementar e fechar a lógica da `DBSCANClassico.java` (baseline sequencial) antes de iniciar a versão paralela | Adriano | Aberta (em andamento) |
 | P-007 | 2026-10-21 | Rodar testes de escalabilidade e gerar os 2 gráficos finais | Grupo todo | Aberta |
@@ -175,6 +176,13 @@ Modelo de entrada (copiar, preencher e colocar abaixo, da mais antiga para a mai
 - **Participantes:** Adriano (sessão com Claude Code)
 - **O que aconteceu:** Adriano gerou, em notebook Python próprio, um dataset sintético de 425 pontos (`make_moons` + `make_circles` + ruído uniforme) exportado para `data/demo_moons_circles.csv`; ligado `"dbscan-classico"` ao switch do `Main.java` (faltava desde a criação do stub); criado `scripts/plot_clusters.py` (visualização reutilizável de qualquer resultado de clusterização, junta dataset + CSV de rótulos por `id`); `DBSCANClassico` rodado com `eps=0.2;minPts=5` encontrou os 4 clusters esperados e 15 pontos de ruído, confirmado visualmente em `results/plots/demo_moons_circles_dbscan.png`.
 - **Achados:** A-005
+
+### 2026-11-11 (qua) — k-means paralelo implementado (primeira versão compilando)
+
+- **Tipo:** implementação · ferramenta
+- **Participantes:** Herik
+- **O que aconteceu:** criei `kmeans/KMeansClassico.java` apenas como esqueleto (javadoc com a convenção de rótulos e os parâmetros; a lógica sequencial ainda não foi escrita). Em `KMeansClustering.java` (versão paralela) escrevi a validação de parâmetros (`k`, `numThreads`), `getName()` (`"kmeans"`), a divisão dos pontos em faixas contíguas (uma tarefa por faixa no `ExecutorService`, cada uma com acumuladores próprios de soma e contagem, sem lock), a redução das faixas sempre na mesma ordem, a atualização dos centróides (cluster vazio mantém o centróide anterior) com critério de parada por `tol`, e a inicialização k-means++ (`initCentroids`, `squaredDistance`). Depois, revisei o arquivo e corrigi os erros que impediam a compilação: faltava o método `assignRange`, além de `numChunk`/`maxSHift` digitados errado, um `]` sobrando e um argumento nomeado (`numNoisePoints: 0`) que não existe em Java. O projeto compila com `javac`, mas o k-means ainda **não foi executado** nem comparado com um resultado de referência. Também comentei o código e reescrevi o javadoc do k-means++ de forma mais simples.
+- **Pendências geradas:** P-013
 
 ---
 

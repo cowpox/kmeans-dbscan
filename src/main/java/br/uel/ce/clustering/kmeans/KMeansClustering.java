@@ -26,7 +26,7 @@ import java.util.concurrent.Future;
  * as suas próprias somas. Depois as somas de todas as faixas são juntadas, sempre na
  * mesma ordem, e os centróides são recalculados.
 
- * Complexidade temporal por iteração: O(n . k . d / P + P . k · d), com P = numThreads
+ * Complexidade temporal por iteração: O(n . k . d / P + P . k . d), com P = numThreads
  *
  * Parâmetros: idem do KMeansClassico, k, maxIter, seed e tol.
  * 
@@ -132,9 +132,9 @@ public final class KMeansClustering implements ClusteringAlgorithm {
         }
         /**
         * Inicialização k-means++:
-        * O primeiro centróide é um ponto escolhido ao acaso. Os demais também são
-        * escolhidos ao acaso, mas quanto mais longe um ponto está dos centróides
-        * já escolhidos, maior a chance de ele ser o próximo.
+        * O primeiro centróide é um ponto escolhido ao acaso, assim como Os demais,
+        * mas quanto mais longe um ponto está dos centróides já escolhidos, maior
+        * a chance de ele ser o próximo.
         */
         
         private static double[][] initCentroids(List<DataPoint> dataset, int k, Random random){

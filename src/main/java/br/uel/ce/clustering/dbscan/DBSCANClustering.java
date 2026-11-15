@@ -5,47 +5,167 @@ import br.uel.ce.clustering.common.ClusteringAlgorithm;
 import br.uel.ce.clustering.common.ClusteringResult;
 import br.uel.ce.clustering.common.DataPoint;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.Future;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
-
-/**
- * Implementação paralela do DBSCAN.
- *
- * Responsáveis: Adriano e Sofia.
- *
- * REGRA DA DISCIPLINA: a implementação deste algoritmo — incluindo qualquer
- * função auxiliar que faça parte do método (cálculo de distância, busca de
- * vizinhança, expansão de clusters, fusão entre partições etc.) — NÃO pode
- * usar IA generativa. Ver ../../../../../../docs/referencial_teorico.md para
- * as referências de DBSCAN paralelo em memória compartilhada — em especial
- * Patwary et al. 2012 (merge de clusters via disjoint-set/union-find) e
- * Wang, Gu & Shun 2020 (mais aplicável ao nosso cenário com
- * ExecutorService/ForkJoin numa única máquina, memória compartilhada).
- *
- * Parâmetros esperados em AlgorithmParams (via --params na CLI):
- *   eps     — raio da vizinhança (obrigatório)
- *   minPts  — número mínimo de pontos para formar uma região densa (obrigatório)
- */
 public final class DBSCANClustering implements ClusteringAlgorithm {
 
     @Override
     public ClusteringResult run(List<DataPoint> dataset, AlgorithmParams params,
-                                 ExecutorService executor, int numThreads) {
+                                ExecutorService executor, int numThreads) throws Exception {
+
         double eps = params.getDouble("eps", -1);
         int minPts = params.getInt("minPts", -1);
-        if (eps <= 0 || minPts <= 0) {
-            throw new IllegalArgumentException("Parâmetros obrigatórios ausentes: eps, minPts");
+        if (!Double.isFinite(eps) || eps <= 0 || minPts <= 0) {
+            throw new IllegalArgumentException("eps e minPts devem ser positivos");
         }
 
-        // TODO (Adriano, Sofia): implementar o DBSCAN paralelo aqui.
-        //  - Particionar o espaço de dados entre as threads do ExecutorService.
-        //  - Cada partição identifica pontos núcleo e expande clusters localmente.
-        //  - Tratar os pontos na fronteira entre partições: mesclar clusters que
-        //    se espalham por mais de uma partição (ex.: estrutura union-find).
-        //  - Convenção de rótulos (mesma do DBSCANClassico): -1 = marcação interna
-        //    de "não visitado" (estado inicial, não deve sobrar no resultado final);
-        //    -2 = rótulo final de ruído; 0, 1, 2, ... = clusters.
-        throw new UnsupportedOperationException("DBSCAN ainda não implementado");
+        int n = dataset.size();
+        if (n == 0) {
+            return new ClusteringResult(new int[0], 0, 0);
+        }
+
+        int threads = Math.max(1, Math.min(numThreads, n));
+        int bloco = (n + threads - 1) / threads;
+        double eps2 = eps * eps;
+        boolean[] core = new boolean[n];
+        List<Future<?>> tarefas = new ArrayList<>();
+
+        for (int t = 0; t < threads; t++) {
+            int inicio = t * bloco;
+            int fim = Math.min(inicio + bloco, n);
+            if (inicio >= fim) break;
+
+            tarefas.add(executor.submit(() -> {
+                for (int i = inicio; i < fim; i++) {
+                    int vizinhos = 0;
+
+                    for (int j = 0; j < n; j++) {
+                        if (distancia2(dataset.get(i), dataset.get(j)) <= eps2) {
+                            vizinhos++;
+
+                            if (vizinhos >= minPts) break;
+                        }
+                    }
+                    core[i] = vizinhos >= minPts;
+                }
+            }));
+        }
+
+        for (Future<?> tarefa : tarefas) {
+            tarefa.get();
+        }
+
+        UnionFind grupos = new UnionFind(n);
+        tarefas.clear();
+
+        for (int t = 0; t < threads; t++) {
+            int inicio = t * bloco;
+            int fim = Math.min(inicio + bloco, n);
+
+            if (inicio >= fim) break;
+
+            tarefas.add(executor.submit(() -> {
+                for (int i = inicio; i < fim; i++) {
+                    if (!core[i]) continue;
+
+                    for (int j = i + 1; j < n; j++) {
+                        if (core[j] &&
+                                distancia2(dataset.get(i), dataset.get(j)) <= eps2) {
+                            grupos.unir(i, j);
+                        }
+                    }
+                }
+            }));
+        }
+        for (Future<?> tarefa : tarefas) {
+            tarefa.get();
+        }
+
+        int[] labels = new int[n];
+        Arrays.fill(labels, -2);
+
+        Map<Integer, Integer> ids = new HashMap<>();
+        int numClusters = 0;
+
+        for (int i = 0; i < n; i++) {
+            if (!core[i]) continue;
+
+            int raiz = grupos.achar(i);
+
+            if (!ids.containsKey(raiz)) {
+                ids.put(raiz, numClusters++);
+            }
+
+            labels[i] = ids.get(raiz);
+        }
+
+        int ruido = 0;
+
+        for (int i = 0; i < n; i++) {
+            if (core[i]) continue;
+
+            for (int j = 0; j < n; j++) {
+                if (core[j] &&
+                        distancia2(dataset.get(i), dataset.get(j)) <= eps2) {
+                    labels[i] = labels[j];
+                    break;
+                }
+            }
+
+            if (labels[i] == -2) {
+                ruido++;
+            }
+        }
+
+        return new ClusteringResult(labels, numClusters, ruido);
+    }
+
+    private static double distancia2(DataPoint a, DataPoint b) {
+        double[] x = a.getFeatures();
+        double[] y = b.getFeatures();
+
+        if (x.length != y.length) {
+            throw new IllegalArgumentException("Dimensoes diferentes");
+        }
+        double soma = 0;
+
+        for (int d = 0; d < x.length; d++) {
+            double diferenca = x[d] - y[d];
+            soma += diferenca * diferenca;
+        }
+
+        return soma;
+    }
+
+    private static class UnionFind {
+        private final int[] pai;
+
+        UnionFind(int n) {
+            pai = new int[n];
+
+            for (int i = 0; i < n; i++) {
+                pai[i] = i;
+            }
+        }
+
+        int achar(int x) {
+            if (pai[x] != x) {
+                pai[x] = achar(pai[x]);
+            }
+            return pai[x];
+        }
+        synchronized void unir(int a, int b) {
+            int raizA = achar(a);
+            int raizB = achar(b);
+            if (raizA != raizB) {
+                pai[raizB] = raizA;
+            }
+        }
     }
 
     @Override

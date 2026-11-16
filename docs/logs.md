@@ -6,7 +6,7 @@
 **Projeto:** implementação paralela de k-means e DBSCAN em Java, com análise de escalabilidade
 **Instituição:** Departamento de Computação, UEL · **Disciplina:** Computação Escalável (prof.ª Larissa C. Shimomura)
 **Mantido por:** Herik Daurizio Ricardo, Julia Yokoyama Massaki, Adriano Lúcio Uchôa Brandão, Sofia Gutschow Casal
-**Última atualização:** 2026-11-12
+**Última atualização:** 2026-11-16
 
 ---
 
@@ -30,18 +30,18 @@
 
 ---
 
-## 1. Estado atual (snapshot em 2026-10-23)
+## 1. Estado atual (snapshot em 2026-11-16)
 
 | Dimensão | Situação |
 |---|---|
-| **Fase** | Revisão de literatura concluída; implementação dos algoritmos ainda não iniciada |
-| **Frente ativa** | Fichamentos e revisão de literatura (finalizados hoje); próxima frente é a implementação de k-means e DBSCAN |
+| **Fase** | Revisão de literatura concluída; os dois algoritmos (clássico e paralelo) já têm uma primeira versão implementada para k-means e DBSCAN |
+| **Frente ativa** | Validação/correção dos algoritmos já escritos; próxima frente é gerar os datasets oficiais e rodar os experimentos de escalabilidade |
 | **Próximo marco** | Relatório final — prazo **30/11/2026** (atraso: -10%/dia); apresentação final — **04/12/2026** (datas alteradas em 2026-11-10, ver D-007) |
-| **Bloqueio principal** | Nenhum bloqueio técnico; falta decidir os 2 datasets (candidatos levantados em 2026-10-23, ver A-003) e o formato de saída comum antes de começar a implementar |
+| **Bloqueio principal** | Nenhum bloqueio técnico; falta decidir os 2 datasets oficiais (candidatos levantados em 2026-10-23, ver A-003) e gerar os dados antes de rodar os experimentos de escalabilidade |
 | **Divisão de responsabilidades** | Herik e Julia → k-means; Adriano e Sofia → DBSCAN |
 | **Revisão de literatura** | Concluída — 23 artigos fichados em 8 slots temáticos (KM1–KM4 para k-means, DB1–DB4 para DBSCAN), cada slot com revisão de consistência própria |
-| **Implementação (k-means)** | Em andamento — `KMeansClustering.java` (paralelo) escrito e compilando, ainda não executado/validado; `KMeansClassico.java` (baseline sequencial) só esqueleto (ver P-013) |
-| **Implementação (DBSCAN)** | Em andamento — `DBSCANClassico.java` (baseline sequencial) sendo ajustado por Adriano; `DBSCANClustering.java` (versão paralela) ainda stub vazio, só começa depois da clássica fechada |
+| **Implementação (k-means)** | `KMeansClassico.java` (baseline sequencial, Julia) e `KMeansClustering.java` (paralelo, Herik) implementados e rodando via `Main.java`; ainda sem validação de corretude formal (comparação ponto a ponto) nem de speedup — ver P-013 |
+| **Implementação (DBSCAN)** | `DBSCANClassico.java` (baseline sequencial, Adriano) e `DBSCANClustering.java` (paralelo, Sofia) implementados; validados ponto a ponto no dataset `demo_moons_circles.csv` (425 pontos) — mesmo número de clusters/ruído e nenhuma divergência de rótulo entre as duas versões (ver A-007) |
 | **Experimentos de escalabilidade** | Não iniciados — scripts prontos (`generate_datasets.py`, `run_scalability_tests.sh`, `plot_results.py`), datasets ainda não gerados |
 | **Relatório** | Template LaTeX pronto (`relatorio/template_trabalho_semestre.tex`), conteúdo ainda não escrito |
 | **Estrutura de pastas** | Ver §6 (mapa da pasta) |
@@ -62,7 +62,7 @@
 | D-007 | 2026-11-10 | Prazos da disciplina alterados: relatório final adiado de 12/11/2026 para **30/11/2026** (mantém atraso de -10%/dia); apresentação final adiada de 13/11/2026 para **04/12/2026**. | Professora (comunicado à turma) | Confirmada |
 | D-008 | 2026-11-10 | Criada `dbscan/DBSCANClassico.java` (stub), versão sequencial/1-núcleo do DBSCAN, usada como baseline de corretude e de speedup — não entra nos 2 gráficos oficiais (k-means vs. DBSCAN paralelo). Ao rodar os testes, usar `--resultados-csv` separado para o baseline (ex.: `results/baseline_results.csv`), diferente do CSV oficial (`results/scalability_results.csv`), para não poluir `plot_results.py` com uma 3ª série. | Adriano (sessão com Claude Code) | Confirmada |
 | D-009 | 2026-11-10 | Convenção de rótulos do DBSCAN (`DBSCANClustering` e `DBSCANClassico`, mesma em ambos): `-1` = marcação interna de "não visitado" (estado inicial, não deve sobrar no resultado final); `-2` = rótulo final de ruído; `0, 1, 2, ...` = clusters. Difere do sklearn (que usa `-1` para ruído) — ao validar a corretude do Java contra o notebook de referência, mapear `-1 (sklearn) ↔ -2 (java)` antes de comparar. | Adriano | Confirmada |
-| D-010 | 2026-11-10 | Construir uma animação interativa do DBSCAN (passo a passo, HTML autocontido/Canvas 2D/JS puro, publicada como artifact privado), reaproveitando a estrutura de um artifact anterior ("DBSCAN em movimento") já feito para outra disciplina/estudo. Fase 1 (agora): versão só do DBSCAN clássico, usando o dataset real de `data/demo_moons_circles.csv` (não um dataset genérico sorteado) e a convenção de rótulos de D-009. Fase 2 (depois que `DBSCANClustering` — versão paralela — estiver pronta): versão lado a lado clássico vs. paralelo, mostrando particionamento entre threads e fusão de clusters nas fronteiras (union-find) — o ponto central do relatório. | Adriano | Confirmada (fase 1 em andamento) |
+| D-010 | 2026-11-10 | Construir uma animação interativa do DBSCAN (passo a passo, HTML autocontido/Canvas 2D/JS puro, publicada como artifact privado), reaproveitando a estrutura de um artifact anterior ("DBSCAN em movimento") já feito para outra disciplina/estudo. Fase 1 (agora): versão só do DBSCAN clássico, usando o dataset real de `data/demo_moons_circles.csv` (não um dataset genérico sorteado) e a convenção de rótulos de D-009. Fase 2 (depois que `DBSCANClustering` — versão paralela — estiver pronta): versão lado a lado clássico vs. paralelo, mostrando particionamento entre threads e fusão de clusters nas fronteiras (union-find) — o ponto central do relatório. | Adriano | Confirmada (fase 1 em andamento; `DBSCANClustering` já está pronta desde 2026-11-15, então a fase 2 pode começar — ver P-012) |
 
 ---
 
@@ -75,14 +75,15 @@
 | P-003 | 2026-10-21 | Escolher/gerar os 2 datasets (10.000–150.000 pontos; se sintéticos, com distribuições diferentes) | Grupo todo | Aberta |
 | P-004 | 2026-10-21 | Definir formato de saída comum entre os dois algoritmos (além da interface já criada em `common/`) | Grupo todo | Aberta |
 | P-005 | 2026-10-21 | Implementar k-means paralelo | Herik e Julia | Aberta (primeira versão escrita e compilando em 2026-11-11; falta executar e validar) |
-| P-013 | 2026-11-11 | Implementar `KMeansClassico.java` (baseline sequencial, hoje só esqueleto) e usá-lo para validar a corretude e o speedup do k-means paralelo | Herik e Julia | Aberta |
-| P-006 | 2026-10-21 | Implementar DBSCAN paralelo | Adriano e Sofia | Aberta (depende da clássica — ver P-011) |
-| P-011 | 2026-11-10 | Implementar e fechar a lógica da `DBSCANClassico.java` (baseline sequencial) antes de iniciar a versão paralela | Adriano | Aberta (em andamento) |
+| P-013 | 2026-11-11 | Implementar `KMeansClassico.java` (baseline sequencial, hoje só esqueleto) e usá-lo para validar a corretude e o speedup do k-means paralelo | Herik e Julia | Em andamento (`KMeansClassico.java` implementado por Julia em 2026-11-14; falta a comparação formal ponto a ponto entre clássico e paralelo e a medição de speedup — ver P-014) |
+| P-006 | 2026-10-21 | Implementar DBSCAN paralelo | Adriano e Sofia | Concluída (2026-11-15: Sofia implementou `DBSCANClustering.java`; validado ponto a ponto contra o clássico em 2026-11-16 — ver A-007) |
+| P-011 | 2026-11-10 | Implementar e fechar a lógica da `DBSCANClassico.java` (baseline sequencial) antes de iniciar a versão paralela | Adriano | Concluída (2026-11-10) |
+| P-014 | 2026-11-16 | Validar corretude ponto a ponto do k-means paralelo contra `KMeansClassico.java` (hoje só confirmado que ambos rodam e retornam o mesmo número de clusters, sem comparar rótulo a rótulo) e medir o speedup | Herik e Julia | Aberta |
 | P-007 | 2026-10-21 | Rodar testes de escalabilidade e gerar os 2 gráficos finais | Grupo todo | Aberta |
 | P-008 | 2026-10-21 | Escrever relatório final (template em `relatorio/template_trabalho_semestre.tex`) — prazo **30/11/2026** (atraso: -10%/dia; data alterada em 2026-11-10, era 12/11/2026 — ver D-007) | Grupo todo | Aberta |
 | P-009 | 2026-10-21 | Preparar apresentação final (~20 min, ~5 min por pessoa) — **04/12/2026** (data alterada em 2026-11-10, era 13/11/2026 — ver D-007) | Grupo todo | Aberta |
 | P-010 | 2026-10-23 | Decidir o par de datasets (candidatos em A-003) e confirmar com a professora se uma visualização didática do funcionamento paralelo é permitida | Grupo todo | Aberta |
-| P-012 | 2026-11-10 | Construir a animação interativa do DBSCAN (ver D-010) — fase 1 (clássico) em andamento; fase 2 (lado a lado com o paralelo) depende de `DBSCANClustering` estar pronta (ver P-006) | Adriano | Aberta (fase 1 em andamento) |
+| P-012 | 2026-11-10 | Construir a animação interativa do DBSCAN (ver D-010) — fase 1 (clássico) em andamento; fase 2 (lado a lado com o paralelo) depende de `DBSCANClustering` estar pronta (ver P-006) | Adriano | Aberta (fase 1 em andamento; `DBSCANClustering` ficou pronta em 2026-11-15, fase 2 pode começar) |
 
 ---
 
@@ -97,6 +98,7 @@ Descobertas e observações que mudam ou informam o rumo do projeto.
 | A-003 | 2026-10-23 | O 3D Road Network (UCI) em lat/lon é 2-D e permite uma demonstração visual: os clusters atravessam as partições, o que mostra a fusão do DBSCAN. Seu uso em k-means está na literatura, mas não encontrei uso em DBSCAN. Para o DBSCAN, a literatura lida usa Household, GeoLife e Cosmo50. | Serve para o gráfico e para a demonstração. Se o grupo quiser respaldo da literatura de DBSCAN, o Household é o candidato. |
 | A-004 | 2026-11-10 | `DBSCANClassico.regionQuery` usa `List<Integer>` (boxing) para guardar os vizinhos — simples de escrever, mas em O(n²) chamadas (até 150k pontos) o boxing e a falta de localidade de cache geram alocação extra e pressão de GC, o que pode introduzir ruído na medição de tempo usada para os gráficos de escalabilidade. Alternativas avaliadas: (B) array primitivo dinâmico próprio (sem boxing, mais código pra escrever à mão); (C) buffer `int[n]` pré-alocado e reaproveitado entre chamadas (mais rápido ainda, mas introduz estado mutável que exigiria um buffer por thread na versão paralela). | Manter `List<Integer>` por ora (já funciona); migrar para (B) só se o tempo de execução em 150k pontos for inviável ou os gráficos ficarem ruidosos. Qualquer que seja a escolha, usar a MESMA estrutura em `DBSCANClustering` (paralela) para não contaminar a comparação clássico vs. paralelo com overhead de boxing/alocação em vez de paralelismo puro. |
 | A-005 | 2026-11-10 | `DBSCANClassico` validado visualmente em `data/demo_moons_circles.csv` (425 pontos: 2 luas entrelaçadas + 2 círculos concêntricos + 25 pontos de ruído, gerado por Adriano em notebook Python próprio). Com `eps=0.2;minPts=5`, encontrou exatamente os 4 clusters esperados (as 2 luas separadas corretamente apesar de não-convexas; os 2 círculos concêntricos separados em interno/externo) e 15 pontos de ruído — ver `results/plots/demo_moons_circles_dbscan.png`. | Confirma que a lógica do DBSCAN clássico está correta também num caso não-trivial (não só no `teste.csv` de 3 pontos), inclusive no cenário que melhor demonstra a vantagem do DBSCAN sobre k-means (clusters não-convexos). Esse dataset é um bom candidato de figura para o relatório/apresentação, mesmo não sendo um dos 2 datasets oficiais de escalabilidade (muito menor que o mínimo de 10k pontos exigido). |
+| A-007 | 2026-11-16 | `DBSCANClustering.java` (paralelo, Sofia) foi revisado e testado contra `DBSCANClassico.java` no mesmo dataset (`demo_moons_circles.csv`, `eps=0.2;minPts=5`, 1 thread no clássico vs. 4 threads no paralelo): mesmo total de clusters (4) e de ruído (15); comparação ponto a ponto (425 pontos) não encontrou nenhuma divergência de ruído/não-ruído, e cada cluster do clássico mapeia para exatamente um cluster do paralelo (sem pontos trocando de cluster entre versões). A lógica paralela usa detecção de núcleos particionada por thread, uma fase de Union-Find (sincronizada em `unir`, sem race condition) para unir núcleos transitivamente — o que modela corretamente cadeias de densidade sem exigir que todos os núcleos de um cluster estejam diretamente a `eps` um do outro — e atribuição de pontos de borda ao primeiro núcleo encontrado (ambíguo por natureza do DBSCAN, mas consistente com o clássico). | `DBSCANClustering.java` pode ser considerado correto para os casos testados; falta validar em escala (10k–150k pontos, os datasets oficiais) e medir o speedup real — isso ainda depende de P-003/P-010 (escolha e geração dos datasets oficiais). |
 | A-006 | 2026-11-10 | A animação interativa (D-010, `https://claude.ai/artifact/PSacE1yM9mSt9oWBtDj3pE`) **não executa** `DBSCANClassico.java` — artifacts rodam isolados no navegador e não conseguem chamar a JVM/o `.jar` nem buscar arquivos externos (`data/*.csv`). É uma reimplementação em JavaScript que espelha manualmente o mesmo fluxo e a mesma convenção de rótulos do arquivo Java, com os 425 pontos do dataset embutidos como array fixo (congelado no momento da publicação). | Duas consequências: (1) a implementação entregue continua 100% do grupo, sem IA — a animação é só recurso visual/didático, não o artefato avaliado; (2) tanto a lógica quanto o dataset da animação são cópias estáticas — se `DBSCANClassico.java` mudar (ex.: a estrutura de dados do `regionQuery`, A-004) ou o dataset for regerado, a página só reflete isso depois de eu replicar a mudança e republicar manualmente (`edit_version`). A animação é pensada para datasets pequenos e demonstrativos (algumas centenas de pontos); os datasets oficiais de escalabilidade (10k–150k pontos) não cabem nesse formato passo a passo — para esses, o que importa é `plot_results.py`, não a animação. |
 
 ---
@@ -184,6 +186,28 @@ Modelo de entrada (copiar, preencher e colocar abaixo, da mais antiga para a mai
 - **O que aconteceu:** criei `kmeans/KMeansClassico.java` apenas como esqueleto (javadoc com a convenção de rótulos e os parâmetros; a lógica sequencial ainda não foi escrita). Em `KMeansClustering.java` (versão paralela) escrevi a validação de parâmetros (`k`, `numThreads`), `getName()` (`"kmeans"`), a divisão dos pontos em faixas contíguas (uma tarefa por faixa no `ExecutorService`, cada uma com acumuladores próprios de soma e contagem, sem lock), a redução das faixas sempre na mesma ordem, a atualização dos centróides (cluster vazio mantém o centróide anterior) com critério de parada por `tol`, e a inicialização k-means++ (`initCentroids`, `squaredDistance`). Depois, revisei o arquivo e corrigi os erros que impediam a compilação: faltava o método `assignRange`, além de `numChunk`/`maxSHift` digitados errado, um `]` sobrando e um argumento nomeado (`numNoisePoints: 0`) que não existe em Java. O projeto compila com `javac`, mas o k-means ainda **não foi executado** nem comparado com um resultado de referência. Também comentei o código e reescrevi o javadoc do k-means++ de forma mais simples.
 - **Pendências geradas:** P-013
 
+### 2026-11-14 (sáb) — `KMeansClassico.java` implementado
+
+- **Tipo:** implementação
+- **Participantes:** Julia
+- **O que aconteceu:** implementação do baseline sequencial de k-means (`kmeans/KMeansClassico.java`, antes só esqueleto) e ligação ao switch do `Main.java` (`"kmeans-classico"`).
+
+### 2026-11-15 (dom) — `DBSCANClustering.java` (paralelo) implementado
+
+- **Tipo:** implementação
+- **Participantes:** Sofia
+- **O que aconteceu:** primeira versão do DBSCAN paralelo: detecção de pontos-núcleo particionada por thread (contagem de vizinhos via `ExecutorService`), fusão de núcleos por Union-Find (método `unir` sincronizado), e atribuição sequencial dos pontos de borda ao primeiro núcleo encontrado dentro de `eps`. Rótulo final de ruído `-2`, mesma convenção da D-009.
+- **Pendências geradas:** P-006 passa a "em andamento → concluída" após validação (ver 2026-11-16)
+
+### 2026-11-16 (seg) — Sincronização do repositório e validação do DBSCAN paralelo
+
+- **Tipo:** organização · experimento · ferramenta
+- **Participantes:** Adriano (sessão com Claude Code)
+- **O que aconteceu:** puxados 7 commits novos do repositório remoto (k-means clássico de Julia, k-means paralelo de Herik, DBSCAN paralelo de Sofia). Revisão de código do `DBSCANClustering.java` não encontrou problemas de concorrência (sincronização correta no Union-Find, nenhuma leitura/escrita concorrente sem lock). Build com Maven limpo. Testado `dbscan-classico` vs. `dbscan` no dataset `demo_moons_circles.csv`: resultados agregados idênticos (4 clusters, 15 ruído) e comparação ponto a ponto sem nenhuma divergência. Testado também `kmeans-classico` vs. `kmeans` no mesmo dataset: ambos rodam e retornam 4 clusters, mas sem comparação ponto a ponto ainda (ver P-014).
+- **Decisões:** —
+- **Achados:** A-007
+- **Pendências geradas:** P-014; P-006 e P-011 marcadas como concluídas
+
 ---
 
 ## 6. Referências rápidas
@@ -203,8 +227,10 @@ Modelo de entrada (copiar, preencher e colocar abaixo, da mais antiga para a mai
 |---|---|
 | `src/main/java/br/uel/ce/clustering/Main.java` | Interface de execução comum (CLI) para os dois algoritmos |
 | `src/main/java/br/uel/ce/clustering/common/` | `DataPoint`, `DatasetReader`, `ResultWriter`, `ClusteringAlgorithm`, `ClusteringResult`, `AlgorithmParams` |
-| `src/main/java/br/uel/ce/clustering/kmeans/KMeansClustering.java` | Stub do k-means (Herik, Julia) — implementação ainda pendente |
-| `src/main/java/br/uel/ce/clustering/dbscan/DBSCANClustering.java` | Stub do DBSCAN (Adriano, Sofia) — implementação ainda pendente |
+| `src/main/java/br/uel/ce/clustering/kmeans/KMeansClustering.java` | k-means paralelo (Herik) — implementado, falta validar corretude/speedup (P-014) |
+| `src/main/java/br/uel/ce/clustering/kmeans/KMeansClassico.java` | k-means baseline sequencial (Julia) — implementado |
+| `src/main/java/br/uel/ce/clustering/dbscan/DBSCANClustering.java` | DBSCAN paralelo (Sofia) — implementado e validado contra o clássico (A-007) |
+| `src/main/java/br/uel/ce/clustering/dbscan/DBSCANClassico.java` | DBSCAN baseline sequencial (Adriano) — implementado e validado (A-005) |
 | `scripts/` | `generate_datasets.py`, `run_scalability_tests.sh`, `plot_results.py`, `requirements.txt` |
 | `docs/revisao-literatura/` | `fichamentos.md`, `revisao_literatura.md`, `referencias.bib`, `artigos/` (23 PDFs) |
 | `relatorio/` | `template_trabalho_semestre.tex`, `logo_uel.png` |

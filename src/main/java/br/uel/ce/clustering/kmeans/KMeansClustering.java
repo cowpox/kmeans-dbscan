@@ -21,10 +21,29 @@ import java.util.concurrent.Future;
  *
  * Responsáveis: Herik e Julia.
  *
- * Estratégia: os pontos são divididos em numThreads faixas seguidas. Em cada iteração,
- * cada faixa vira uma tarefa no ExecutorService, que atribui os seus pontos e acumula
- * as suas próprias somas. Depois as somas de todas as faixas são juntadas, sempre na
- * mesma ordem, e os centróides são recalculados.
+ * Estratégia (algoritmo de Lloyd, com a etapa de atribuição paralelizada):
+ *   1. Inicialização (k-means++): feita sequencialmente, pois é barata perto do laço
+ *      principal. O primeiro centróide é um ponto sorteado uniformemente; cada seguinte é
+ *      sorteado com probabilidade proporcional ao quadrado da distância ao centróide mais
+ *      próximo já escolhido. Com a mesma seed, os centróides iniciais são os mesmos do
+ *      KMeansClassico.
+ *   2. Divisão dos dados: os pontos são divididos em numThreads faixas seguidas, uma
+ *      tarefa por faixa, e as faixas não se sobrepõem.
+ *   3. Atribuição (paralela): em cada iteração, cada tarefa do ExecutorService rotula os
+ *      seus pontos com o centróide mais próximo (distância euclidiana ao quadrado) e
+ *      acumula soma e contagem por cluster em arrays só dela. Como nenhuma estrutura é
+ *      compartilhada para escrita, não há lock nem operação atômica.
+ *   4. Barreira e redução (sequencial): o laço espera todas as tarefas (Future.get) e
+ *      junta as somas parciais sempre na mesma ordem de faixas. Isso mantém o resultado
+ *      determinístico, e a ordem fixa das somas em ponto flutuante mantém o resultado
+ *      igual a cada execução com o mesmo numThreads.
+ *   5. Atualização: cada centróide vira a média (soma / contagem) do seu cluster. Cluster
+ *      vazio mantém o centróide anterior.
+ *   6. Convergência: repete 3 a 5 até o maior deslocamento de um centróide ser <= tol
+ *      (comparado em distância ao quadrado) ou até atingir maxIter.
+ *   Só a atribuição é paralela, pois concentra o custo O(n . k . d); a redução e a
+ *   atualização custam O(P . k . d) e ficam como trecho sequencial por iteração.
+ *
 
  * Complexidade temporal por iteração: O(n . k . d / P + P . k . d), com P = numThreads
  *
@@ -44,7 +63,7 @@ public final class KMeansClustering implements ClusteringAlgorithm {
 
         int n = dataset.size();
 
-        // k = número de clusters; om-1 dispara exception se o k faltar
+        // k = número de clusters; o -1 dispara exception se o k faltar
         int k = params.getInt("k", -1);
         if (k <= 0 || k > n) {
             throw new IllegalArgumentException("K deve estar entre 1 e " + n);
@@ -132,12 +151,12 @@ public final class KMeansClustering implements ClusteringAlgorithm {
         }
         /**
         * Inicialização k-means++:
-        * O primeiro centróide é um ponto escolhido ao acaso, assim como Os demais,
+        * O primeiro centróide é um ponto escolhido ao acaso, assim como os demais,
         * mas quanto mais longe um ponto está dos centróides já escolhidos, maior
         * a chance de ele ser o próximo.
         */
         
-        private static double[][] initCentroids(List<DataPoint> dataset, int k, Random random){
+        static double[][] initCentroids(List<DataPoint> dataset, int k, Random random){
             int n = dataset.size();
             double[][] centroids = new double[k][];
             centroids[0] = dataset.get(random.nextInt(n)).getFeatures().clone();
@@ -173,7 +192,7 @@ public final class KMeansClustering implements ClusteringAlgorithm {
         }
 
         // Atribui cada ponto de [from, to) ao centróide mais próximo e acumula soma e contagem
-        private static void assignRange(List<DataPoint> dataset, double[][] centroids, int[] labels,
+        static void assignRange(List<DataPoint> dataset, double[][] centroids, int[] labels,
                                         int from, int to, double[][] sums, int[] counts){
             for (int i = from; i < to; i++){
                 double[] x = dataset.get(i).getFeatures();
@@ -195,7 +214,7 @@ public final class KMeansClustering implements ClusteringAlgorithm {
         }
 
         // Calcula a distância euclidiana ao quadrado
-        private static double squaredDistance(double[] a, double[] b){
+        static double squaredDistance(double[] a, double[] b){
             double sum = 0.0;
             for (int j = 0; j < a.length; j++){
                 double diff = a[j] - b[j];

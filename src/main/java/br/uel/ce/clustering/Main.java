@@ -11,6 +11,7 @@ import br.uel.ce.clustering.dbscan.DBSCANClustering;
 import br.uel.ce.clustering.dbscan.DBSCANClusteringS;
 import br.uel.ce.clustering.kmeans.KMeansClassico;
 import br.uel.ce.clustering.kmeans.KMeansClustering;
+import br.uel.ce.clustering.kmeans.KMeansClusteringS;
 
 import java.nio.file.Path;
 import java.util.List;
@@ -47,6 +48,7 @@ public final class Main {
 
         ClusteringAlgorithm algorithm = switch (cli.algoritmo) {
             case "kmeans" -> new KMeansClustering();
+            case "kmeans-paralelo-s" -> new KMeansClusteringS();
             case "kmeans-classico" -> new KMeansClassico();
             case "dbscan" -> new DBSCANClustering();
             case "dbscan-paralelo-s" -> new DBSCANClusteringS();

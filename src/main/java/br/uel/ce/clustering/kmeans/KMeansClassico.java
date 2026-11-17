@@ -14,7 +14,22 @@ import java.util.concurrent.ExecutorService;
  * k-means clássico — implementação sequencial de referência.
  *
  * Baseado em Arthur & Vassilvitskii (2007), com os centróides iniciais escolhidos pelo k-means++
- * 
+ *
+ * Estratégia (algoritmo de Lloyd):
+ *   1. Inicialização (k-means++): o primeiro centróide é um ponto sorteado uniformemente;
+ *      cada centróide seguinte é um ponto sorteado com probabilidade proporcional ao
+ *      quadrado da distância ao centróide mais próximo já escolhido (D²). Isso espalha
+ *      os centróides iniciais e reduz a chance de uma convergência ruim.
+ *   2. Atribuição: cada ponto recebe o rótulo do centróide mais próximo (distância
+ *      euclidiana ao quadrado). Na mesma passada acumulam-se, por cluster, a soma das
+ *      coordenadas e a contagem de pontos.
+ *   3. Atualização: cada centróide passa a ser a média (soma / contagem) dos pontos do
+ *      seu cluster. Cluster vazio mantém o centróide anterior.
+ *   4. Convergência: repetem-se os passos 2 e 3 até que o maior deslocamento de um
+ *      centróide seja <= tol (comparado em distância ao quadrado) ou até atingir maxIter.
+ *   Cada iteração nunca aumenta a soma das distâncias quadráticas intra-cluster (SSE),
+ *   então o método converge, porém para um mínimo local que depende da inicialização.
+ *
  * Responsáveis: Herik e Julia.
  * 
  * Complexidade temporal: O(I . n . k . d)

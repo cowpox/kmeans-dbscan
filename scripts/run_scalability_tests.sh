@@ -20,10 +20,15 @@ THREADS="${THREADS:-4}"
 SIZES=(10000 30000 50000 70000 90000 110000 130000 150000)
 RESULTS_CSV="results/scalability_results.csv"
 
-# Ajustar os parâmetros dos algoritmos conforme a calibração feita pelo grupo
-# nos datasets escolhidos (ex.: k = número de clusters gerados em generate_datasets.py).
-KMEANS_PARAMS="k=8"
-DBSCAN_PARAMS="eps=0.5;minPts=10"
+# Parâmetros calibrados por dataset em 2026-11-20 (ver docs/logs.md, A-010):
+#   - k = número de centros verdadeiros gerados em generate_datasets.py
+#     (dataset1: 8 centros; dataset2: 5 centros).
+#   - eps calibrado via grade de valores com sklearn.cluster.DBSCAN em n=150000
+#     (tamanho máximo), escolhendo o eps que mais se aproxima do número de
+#     clusters verdadeiros com baixo ruído. eps=0.5 (valor anterior) colapsava
+#     os clusters verdadeiros em 2-3 clusters nos dois datasets.
+declare -A KMEANS_PARAMS=( [dataset1]="k=8" [dataset2]="k=5" )
+declare -A DBSCAN_PARAMS=( [dataset1]="eps=0.2;minPts=10" [dataset2]="eps=0.15;minPts=10" )
 
 if [ ! -f "$JAR" ]; then
     echo "Jar não encontrado em $JAR — rode 'mvn package' antes." >&2
@@ -55,8 +60,8 @@ for dataset_nome in dataset1 dataset2; do
         exit 1
     fi
     for tamanho in "${SIZES[@]}"; do
-        run "kmeans" "$dataset_nome" "$dataset_csv" "$KMEANS_PARAMS" "$tamanho"
-        run "dbscan" "$dataset_nome" "$dataset_csv" "$DBSCAN_PARAMS" "$tamanho"
+        run "kmeans" "$dataset_nome" "$dataset_csv" "${KMEANS_PARAMS[$dataset_nome]}" "$tamanho"
+        run "dbscan" "$dataset_nome" "$dataset_csv" "${DBSCAN_PARAMS[$dataset_nome]}" "$tamanho"
     done
 done
 

@@ -15,9 +15,16 @@ import matplotlib.pyplot as plt
 
 def plot_dataset(df, dataset_nome, out_path):
     subset = df[df["dataset"] == dataset_nome].sort_values("tamanho_dataset")
+    tem_min_max = "tempo_min_ms" in subset.columns and "tempo_max_ms" in subset.columns
     fig, ax = plt.subplots(figsize=(8, 5))
     for algoritmo, grupo in subset.groupby("algoritmo"):
-        ax.plot(grupo["tamanho_dataset"], grupo["tempo_execucao_ms"], marker="o", label=algoritmo)
+        if tem_min_max:
+            erro = [grupo["tempo_execucao_ms"] - grupo["tempo_min_ms"],
+                    grupo["tempo_max_ms"] - grupo["tempo_execucao_ms"]]
+            ax.errorbar(grupo["tamanho_dataset"], grupo["tempo_execucao_ms"], yerr=erro,
+                        marker="o", label=algoritmo, capsize=3)
+        else:
+            ax.plot(grupo["tamanho_dataset"], grupo["tempo_execucao_ms"], marker="o", label=algoritmo)
     ax.set_xlabel("Tamanho do dataset (número de pontos)")
     ax.set_ylabel("Tempo de execução (ms)")
     ax.set_title(f"Análise de Escalabilidade — {dataset_nome}")

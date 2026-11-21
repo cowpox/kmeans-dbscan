@@ -16,7 +16,12 @@ data/*.csv
 
 # Resultados gerados (reproduzíveis via scripts/run_scalability_tests.sh)
 results/*.csv
-results/plots/*.png
+results/experimento_*/*.csv
+results/experimento_*/**/*.csv
+
+# Os PNGs de results/experimento_*/plots/ e results/plots/ SÃO commitados —
+# são referenciados diretamente pelos docs/analise_experimento_0X.md (links
+# de imagem ficariam quebrados no GitHub sem eles).
 
 # Python (scripts/)
 __pycache__/

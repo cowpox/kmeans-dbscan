@@ -53,6 +53,12 @@ run() {
         --resultados-csv "$RESULTS_CSV"
 }
 
+# As 3 versões de cada algoritmo entram no mesmo gráfico (plot_results.py agrupa
+# por "algoritmo" automaticamente) — fase exploratória com os 6 algoritmos juntos,
+# a entrega final decide quais séries ficam no gráfico oficial (2 por disciplina).
+ALGOS_KMEANS=(kmeans-classico kmeans kmeans-paralelo-s)
+ALGOS_DBSCAN=(dbscan-classico dbscan dbscan-paralelo-s)
+
 for dataset_nome in dataset1 dataset2; do
     dataset_csv="data/${dataset_nome}_full.csv"
     if [ ! -f "$dataset_csv" ]; then
@@ -60,8 +66,12 @@ for dataset_nome in dataset1 dataset2; do
         exit 1
     fi
     for tamanho in "${SIZES[@]}"; do
-        run "kmeans" "$dataset_nome" "$dataset_csv" "${KMEANS_PARAMS[$dataset_nome]}" "$tamanho"
-        run "dbscan" "$dataset_nome" "$dataset_csv" "${DBSCAN_PARAMS[$dataset_nome]}" "$tamanho"
+        for algoritmo in "${ALGOS_KMEANS[@]}"; do
+            run "$algoritmo" "$dataset_nome" "$dataset_csv" "${KMEANS_PARAMS[$dataset_nome]}" "$tamanho"
+        done
+        for algoritmo in "${ALGOS_DBSCAN[@]}"; do
+            run "$algoritmo" "$dataset_nome" "$dataset_csv" "${DBSCAN_PARAMS[$dataset_nome]}" "$tamanho"
+        done
     done
 done
 

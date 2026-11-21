@@ -1,0 +1,13 @@
+dataset,tarefa,algoritmo_a,algoritmo_b,ari_entre_implementacoes
+dataset1,kmeans,kmeans-classico,kmeans,1.0
+dataset1,kmeans,kmeans-classico,kmeans-paralelo-s,1.0
+dataset1,kmeans,kmeans,kmeans-paralelo-s,1.0
+dataset1,dbscan,dbscan-classico,dbscan,0.9999413346622213
+dataset1,dbscan,dbscan-classico,dbscan-paralelo-s,0.9999413346622213
+dataset1,dbscan,dbscan,dbscan-paralelo-s,1.0
+dataset2,kmeans,kmeans-classico,kmeans,1.0
+dataset2,kmeans,kmeans-classico,kmeans-paralelo-s,1.0
+dataset2,kmeans,kmeans,kmeans-paralelo-s,1.0
+dataset2,dbscan,dbscan-classico,dbscan,0.9999803675140551
+dataset2,dbscan,dbscan-classico,dbscan-paralelo-s,0.9999803675140551
+dataset2,dbscan,dbscan,dbscan-paralelo-s,1.0

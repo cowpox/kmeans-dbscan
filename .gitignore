@@ -14,14 +14,19 @@ target/
 data/*.csv
 !data/README.md
 
-# Resultados gerados (reproduzíveis via scripts/run_scalability_tests.sh)
+# Resultados gerados em results/ (fora de results/experimento_*/): arquivos
+# soltos/legados de teste manual, reproduzíveis, não citados em nenhum doc.
 results/*.csv
-results/experimento_*/*.csv
-results/experimento_*/**/*.csv
 
-# Os PNGs de results/experimento_*/plots/ e results/plots/ SÃO commitados —
-# são referenciados diretamente pelos docs/analise_experimento_0X.md (links
-# de imagem ficariam quebrados no GitHub sem eles).
+# Dentro de results/experimento_*/: só os CSVs de "assignments" (rótulo por
+# ponto — intermediários pesados, só usados pelos scripts de avaliação, sem
+# valor de leitura direta) ficam fora do git. Os CSVs de resumo/agregado
+# (ex. qualidade_por_dimensao.csv, eps_calibrado.csv, speedup_dim_agregado.csv)
+# e os PNGs de plots/ SÃO commitados — são a evidência numérica e visual por
+# trás das tabelas/figuras dos docs/analise_experimento_0X.md (sem eles, os
+# links de imagem ficariam quebrados e os números dos docs, não verificáveis).
+results/experimento_*/assignments/*.csv
+results/experimento_*/assignments_seeds/*.csv
 
 # Python (scripts/)
 __pycache__/

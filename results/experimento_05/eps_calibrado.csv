@@ -1,0 +1,3 @@
+dimensao,eps,min_pts,clusters_verdadeiro,clusters_na_calibracao,fracao_ruido_na_calibracao
+2,0.28480344543090796,10,8,8,0.044533333333333334
+50,8.74956664654821,10,8,8,0.0008666666666666666
